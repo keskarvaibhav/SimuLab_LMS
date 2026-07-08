@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SimuLab LMS — Applied Agentic AI Platform</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0A1628;--navy2:#0F2040;--navy3:#1A3055;
+  --teal:#00D4AA;--teal2:#00B08C;--teal3:#E0FDF6;--teal4:rgba(0,212,170,.12);
+  --amber:#F59E0B;--amber2:#FEF3C7;--amber3:#92400E;
+  --purple:#7C3AED;--purple2:#EDE9FE;--purple3:#5B21B6;
+  --coral:#EF4444;--coral2:#FEE2E2;
+  --green:#10B981;--green2:#D1FAE5;--green3:#065F46;
+  --blue:#3B82F6;--blue2:#EFF6FF;--blue3:#1E40AF;--blue4:#BFDBFE;
+  --g1:#F8FAFC;--g2:#F1F5F9;--g3:#E2E8F0;--g4:#CBD5E1;
+  --g5:#94A3B8;--g6:#64748B;--g7:#475569;--g8:#334155;--g9:#1E293B;
+  --text:#0F172A;--text2:#334155;--text3:#64748B;
+  --white:#fff;
+  --r:12px;--r-sm:8px;--r-lg:16px;--r-xl:20px;
+  --sh:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.05);
+  --sh-md:0 4px 12px rgba(0,0,0,.08);
+  --sh-lg:0 10px 24px rgba(0,0,0,.1);
+}
+body{font-family:'Inter',sans-serif;background:var(--g1);color:var(--text);min-height:100vh}
+button{cursor:pointer;font-family:'Inter',sans-serif;border:none;background:none}
+input,textarea,select{font-family:'Inter',sans-serif}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--g4);border-radius:3px}
+
+/* ── Shell ── */
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:236px;background:var(--navy);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── Sidebar ── */
+.sl-logo{padding:22px 18px 14px;border-bottom:1px solid rgba(255,255,255,.07)}
+.sl-wordmark{font-family:'Space Grotesk',sans-serif;font-size:21px;font-weight:700;color:#fff}
+.sl-wordmark span{color:var(--teal)}
+.sl-tagline{font-size:10px;color:rgba(255,255,255,.28);letter-spacing:.8px;margin-top:2px}
+.sl-section{padding:16px 12px 6px;font-size:9.5px;font-weight:700;color:rgba(255,255,255,.22);letter-spacing:1.2px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;margin:1px 6px;border-radius:var(--r-sm);cursor:pointer;color:rgba(255,255,255,.5);font-size:13px;font-weight:500;transition:all .15s;position:relative}
+.nav-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85)}
+.nav-item.active{background:var(--teal4);color:var(--teal)}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.14);flex-shrink:0;transition:background .15s}
+.nav-item.active .nav-dot{background:var(--teal)}
+.nav-badge{margin-left:auto;background:var(--coral);color:#fff;border-radius:10px;font-size:9.5px;font-weight:700;padding:1px 6px}
+.sl-user{margin-top:auto;padding:14px;border-top:1px solid rgba(255,255,255,.07)}
+.user-row{display:flex;align-items:center;gap:9px}
+.u-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--purple));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.u-name{font-size:13px;font-weight:600;color:#fff}
+.u-role{font-size:10px;color:rgba(255,255,255,.3)}
+
+/* ── Topbar ── */
+.topbar{height:56px;background:var(--white);border-bottom:1px solid var(--g3);padding:0 26px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:0 1px 0 var(--g3)}
+.tb-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;color:var(--text)}
+.tb-sub{font-size:11.5px;color:var(--g5);margin-top:1px}
+.tb-right{display:flex;align-items:center;gap:10px}
+.icon-btn{width:34px;height:34px;border:1px solid var(--g3);border-radius:var(--r-sm);background:var(--white);display:flex;align-items:center;justify-content:center;color:var(--g6);cursor:pointer;transition:background .15s}
+.icon-btn:hover{background:var(--g2)}
+
+/* ── Content ── */
+.content{flex:1;overflow-y:auto;padding:22px 26px}
+
+/* ── Cards ── */
+.card{background:var(--white);border:1px solid var(--g3);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh)}
+.card-lg{background:var(--white);border:1px solid var(--g3);border-radius:var(--r-lg);padding:22px 24px;box-shadow:var(--sh)}
+
+/* ── Stat grid ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat-card{background:var(--white);border:1px solid var(--g3);border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh)}
+.stat-label{font-size:11.5px;color:var(--text3);font-weight:500;margin-bottom:5px}
+.stat-val{font-size:26px;font-weight:700;font-family:'Space Grotesk',sans-serif;color:var(--text);line-height:1}
+.stat-chg{font-size:11px;margin-top:4px}
+.up{color:var(--green)}.dn{color:var(--coral)}
+
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r-sm);font-size:13.5px;font-weight:500;transition:all .15s;cursor:pointer;border:none}
+.btn-primary{background:var(--teal);color:var(--navy)}
+.btn-primary:hover{background:var(--teal2)}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed}
+.btn-secondary{background:var(--white);color:var(--text2);border:1px solid var(--g3)}
+.btn-secondary:hover{background:var(--g2)}
+.btn-ghost{background:transparent;color:var(--text3);border:1px solid transparent}
+.btn-ghost:hover{background:var(--g2);color:var(--text2)}
+.btn-navy{background:var(--navy);color:#fff}
+.btn-navy:hover{background:var(--navy2)}
+.btn-sm{padding:5px 12px;font-size:12.5px}
+.btn-lg{padding:11px 22px;font-size:14.5px}
+
+/* ── Badge ── */
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:500}
+.b-teal{background:var(--teal3);color:var(--green3)}
+.b-amber{background:var(--amber2);color:var(--amber3)}
+.b-purple{background:var(--purple2);color:var(--purple3)}
+.b-red{background:var(--coral2);color:#991B1B}
+.b-green{background:var(--green2);color:var(--green3)}
+.b-gray{background:var(--g2);color:var(--g7)}
+.b-navy{background:rgba(10,22,40,.07);color:var(--navy)}
+.b-blue{background:var(--blue2);color:var(--blue3)}
+
+/* ── Progress bar ── */
+.pbar{height:5px;background:var(--g3);border-radius:3px;overflow:hidden}
+.pfill{height:100%;border-radius:3px;transition:width .4s}
+
+/* ── Table ── */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;padding:9px 13px;text-align:left;border-bottom:1px solid var(--g3);background:var(--g1)}
+td{padding:12px 13px;font-size:13px;border-bottom:1px solid var(--g2);color:var(--text2)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--g1)}
+
+/* ── Forms ── */
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:12.5px;font-weight:500;color:var(--text2);margin-bottom:5px}
+.form-input{width:100%;padding:8px 12px;border:1px solid var(--g3);border-radius:var(--r-sm);font-size:13.5px;color:var(--text);background:var(--white);outline:none;transition:border .15s}
+.form-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,212,170,.1)}
+.form-textarea{width:100%;padding:9px 12px;border:1px solid var(--g3);border-radius:var(--r-sm);font-size:13.5px;color:var(--text);resize:vertical;min-height:90px;outline:none;transition:border .15s}
+.form-textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,212,170,.1)}
+.form-select{width:100%;padding:8px 12px;border:1px solid var(--g3);border-radius:var(--r-sm);font-size:13.5px;color:var(--text);background:var(--white);outline:none;appearance:none}
+
+/* ── Tabs ── */
+.tabs{display:flex;gap:3px;background:var(--g2);padding:3px;border-radius:var(--r-sm);width:fit-content;margin-bottom:16px}
+.tab{padding:5px 14px;border-radius:6px;font-size:12.5px;font-weight:500;cursor:pointer;color:var(--text3);transition:all .15s}
+.tab.active{background:var(--white);color:var(--text);box-shadow:var(--sh)}
+
+/* ── Pill tabs ── */
+.pill-tabs{display:flex;gap:5px;margin-bottom:14px}
+.pill-tab{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:none;transition:all .15s}
+.pill-tab.active{background:var(--navy);color:#fff}
+.pill-tab:not(.active){background:var(--g2);color:var(--g6)}
+.pill-tab:not(.active):hover{background:var(--g3)}
+
+/* ── Modal ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:1000;padding:24px}
+.modal{background:var(--white);border-radius:var(--r-lg);box-shadow:var(--sh-lg);width:100%;max-width:540px;max-height:90vh;overflow-y:auto}
+.modal-hd{padding:22px 24px 0;display:flex;align-items:flex-start;justify-content:space-between}
+.modal-title{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:600}
+.modal-body{padding:18px 24px}
+.modal-ft{padding:0 24px 20px;display:flex;gap:8px;justify-content:flex-end}
+
+/* ── Course cards ── */
+.course-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(275px,1fr));gap:16px}
+.course-card{background:var(--white);border:1px solid var(--g3);border-radius:var(--r-lg);overflow:hidden;cursor:pointer;transition:all .2s;box-shadow:var(--sh)}
+.course-card:hover{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,212,170,.08),var(--sh-md);transform:translateY(-1px)}
+.course-thumb{height:130px;display:flex;align-items:center;justify-content:center;position:relative}
+.course-body{padding:14px 16px}
+.course-title{font-family:'Space Grotesk',sans-serif;font-size:14.5px;font-weight:600;color:var(--text);margin-bottom:3px}
+.course-meta{font-size:11.5px;color:var(--text3);margin-bottom:8px}
+
+/* ── Task cards ── */
+.task-item{background:var(--white);border:1px solid var(--g3);border-radius:var(--r);padding:14px 16px;margin-bottom:9px;cursor:pointer;transition:all .15s;border-left-width:3px}
+.task-item:hover{box-shadow:var(--sh-md)}
+
+/* ── Chat bubbles ── */
+.bubble-user{background:var(--navy);color:#fff;border-radius:12px 12px 4px 12px;padding:10px 14px;font-size:13.5px;max-width:82%;margin-left:auto;margin-bottom:10px;line-height:1.55}
+.bubble-ai{background:var(--white);border:1px solid var(--g3);border-radius:12px 12px 12px 4px;padding:10px 14px;font-size:13.5px;max-width:86%;margin-bottom:10px;line-height:1.65;color:var(--text2)}
+
+/* ── Typing ── */
+.typing{display:flex;gap:4px;align-items:center}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--g4);animation:bounce .65s infinite}
+.dot:nth-child(2){animation-delay:.1s}.dot:nth-child(3){animation-delay:.2s}
+
+/* ── Video player ── */
+.vplayer{background:var(--navy);border-radius:var(--r);aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;cursor:pointer}
+.play-btn{width:58px;height:58px;background:rgba(255,255,255,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,.25);transition:all .2s}
+.play-btn:hover{background:rgba(0,212,170,.2);border-color:var(--teal);transform:scale(1.06)}
+.vcontrols{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.65));padding:14px;display:flex;align-items:center;gap:10px}
+
+/* ── Onboarding ── */
+.ob-shell{min-height:100vh;background:linear-gradient(135deg,var(--navy) 0%,#0F2A4A 55%,#0A3040 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.ob-card{background:var(--white);border-radius:22px;padding:38px 46px;width:100%;max-width:490px;box-shadow:0 24px 48px rgba(0,0,0,.22)}
+.step-dots{display:flex;gap:7px;margin-bottom:28px;justify-content:center}
+.sdot{height:7px;border-radius:4px;background:var(--g3);transition:all .3s}
+.sdot.active{width:22px;background:var(--teal)}
+.sdot.done{width:7px;background:var(--teal);opacity:.35}
+.sdot:not(.active):not(.done){width:7px}
+
+/* ── Community / AI Feed ── */
+.engine-panel{background:linear-gradient(135deg,#0A1628 0%,#053528 100%);border-radius:var(--r-lg);padding:18px 20px;margin-bottom:16px;border:1px solid rgba(0,212,170,.14)}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+.gen-btn{display:flex;align-items:center;gap:7px;width:100%;padding:8px 11px;border-radius:var(--r-sm);font-size:11.5px;font-weight:500;cursor:pointer;margin-bottom:5px;transition:all .15s;border:1px solid;text-align:left}
+.gen-btn:disabled{opacity:.4;cursor:not-allowed}
+.gen-btn.ts{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.28);color:#93C5FD}
+.gen-btn.ts:hover:not(:disabled){background:rgba(59,130,246,.16)}
+.gen-btn.sb{background:rgba(0,212,170,.07);border-color:rgba(0,212,170,.22);color:#5EEAD4}
+.gen-btn.sb:hover:not(:disabled){background:rgba(0,212,170,.15)}
+.ai-post{border-radius:var(--r-lg);overflow:hidden;margin-bottom:14px;box-shadow:var(--sh-md);animation:fadeIn .3s ease both}
+.student-post{background:var(--white);border:1px solid var(--g3);border-radius:var(--r);padding:16px 18px;margin-bottom:12px;box-shadow:var(--sh);animation:fadeIn .3s ease both}
+.post-avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.reply-bubble{flex:1;background:var(--g1);border-radius:8px;padding:7px 10px}
+.reply-input{width:100%;padding:7px 10px;border:1px solid var(--g3);border-radius:var(--r-sm);font-size:12.5px;outline:none;transition:border .15s}
+.reply-input:focus{border-color:var(--teal);box-shadow:0 0 0 2px rgba(0,212,170,.1)}
+.engagement-box{border-radius:var(--r-sm);padding:11px 14px;margin:12px 0 4px;border:1px solid}
+.sprint-box{background:var(--g1);border:1px solid var(--g3);border-radius:var(--r-sm);padding:12px;margin-top:10px}
+.post-actions{display:flex;align-items:center;gap:12px;padding-top:11px;margin-top:11px;border-top:1px solid var(--g2)}
+.action-btn{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--g5);cursor:pointer;background:none;border:none;transition:color .15s;padding:0;font-family:'Inter',sans-serif}
+.action-btn:hover{color:var(--g7)}
+.action-btn.liked{color:var(--coral);font-weight:600}
+.schedule-row{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid var(--g2)}
+.schedule-row:last-child{border-bottom:none}
+
+/* ── Eval ── */
+.eval-score{font-size:46px;font-weight:700;font-family:'Space Grotesk',sans-serif;line-height:1}
+.criterion-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--g2)}
+.criterion-row:last-child{border-bottom:none}
+
+/* ── Side cards ── */
+.side-card{background:var(--white);border:1px solid var(--g3);border-radius:var(--r);padding:15px;margin-bottom:13px;box-shadow:var(--sh)}
+.side-title{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--text);margin-bottom:11px}
+
+/* ── Animations ── */
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useRef,useCallback} = React;
+
+// ═══════════════════════════════════════════════════════════════
+// MOCK DATA
+// ═══════════════════════════════════════════════════════════════
+const COURSES = [
+  {id:1,title:"Applied Agentic AI: Analyst to Architect",thumb:"🤖",bg:"#0A1628",modules:6,duration:"12 hrs",level:"Intermediate",enrolled:87,progress:68,instructor:"Aditya Jyoti",tags:["n8n","Claude API","Automation"]},
+  {id:2,title:"AI for Business Strategy & Decision Making",thumb:"📊",bg:"#1A3055",modules:5,duration:"8 hrs",level:"Beginner",enrolled:120,progress:30,instructor:"Sandesh Gupta",tags:["Strategy","AI","MBA"]},
+  {id:3,title:"Data Analytics with Python for MBAs",thumb:"🐍",bg:"#065F46",modules:8,duration:"16 hrs",level:"Intermediate",enrolled:64,progress:0,instructor:"Anurag Meher",tags:["Python","Pandas","Analytics"]},
+  {id:4,title:"Generative AI Product Management",thumb:"💡",bg:"#5B21B6",modules:4,duration:"6 hrs",level:"Advanced",enrolled:43,progress:100,instructor:"Aditya Jyoti",tags:["Product","GenAI","Strategy"]},
+];
+const TASKS = [
+  {id:1,title:"Build a Lead Nurturing Agent in n8n",course:"Applied Agentic AI",due:"Jul 10, 2026",status:"pending",points:100,description:"Design and implement a complete lead nurturing automation using n8n. The agent must: (1) capture leads from a webhook, (2) enrich with AI, (3) send personalised follow-ups, (4) update a CRM."},
+  {id:2,title:"AI Strategy Memo — FMCG Sector",course:"AI for Business Strategy",due:"Jul 14, 2026",status:"submitted",points:80,submittedAt:"Jul 6, 2026",description:"Write a 600-word strategic memo advising a mid-size FMCG company on integrating AI into their supply chain. Include ROI projections and risk assessment."},
+  {id:3,title:"Exploratory Data Analysis: Retail Dataset",course:"Data Analytics with Python",due:"Jul 20, 2026",status:"graded",points:90,score:82,feedback:"Good work overall. EDA is thorough and visualisations are clear. Missing: cohort analysis and seasonality decomposition. Regression model accuracy (74%) can be improved with feature engineering.",description:"Perform complete EDA on the provided retail dataset. Build at least one predictive model."},
+  {id:4,title:"Product Roadmap: AI Feature Prioritisation",course:"GenAI Product Management",due:"Jul 8, 2026",status:"pending",points:120,description:"Using the RICE framework, prioritise 8 AI features for a hypothetical SaaS product. Justify each score with data and business rationale."},
+];
+const STUDENTS = [
+  {id:1,name:"Priya Sharma",email:"priya@jain.edu",college:"JAIN University",batch:"2025",completed:4,score:89,streak:14,status:"active"},
+  {id:2,name:"Rahul Mehta",email:"rahul@christuniversity.in",college:"Christ University",batch:"2026",completed:2,score:74,streak:6,status:"active"},
+  {id:3,name:"Sneha Kulkarni",email:"sneha@kjsomaiya.edu.in",college:"KJ Somaiya",batch:"2025",completed:3,score:92,streak:21,status:"active"},
+  {id:4,name:"Arjun Patel",email:"arjun@sibm.edu",college:"SIBM Pune",batch:"2025",completed:1,score:61,streak:2,status:"at-risk"},
+  {id:5,name:"Divya Nair",email:"divya@psgim.ac.in",college:"PSGIM",batch:"2026",completed:4,score:85,streak:9,status:"active"},
+  {id:6,name:"Karthik Rao",email:"karthik@vvce.ac.in",college:"VVCE Mysuru",batch:"2026",completed:0,score:0,streak:0,status:"inactive"},
+];
+const MODULES = [
+  {id:1,title:"Introduction to Agentic AI",duration:"1h 20m",lessons:4,done:true},
+  {id:2,title:"n8n Fundamentals & Workflow Design",duration:"2h 10m",lessons:6,done:true},
+  {id:3,title:"Integrating LLMs: Claude API Deep Dive",duration:"2h 45m",lessons:7,done:true},
+  {id:4,title:"Building Memory in Agents",duration:"2h 00m",lessons:5,done:false,active:true},
+  {id:5,title:"Multi-Agent Orchestration",duration:"1h 50m",lessons:5,done:false},
+  {id:6,title:"Capstone: Production-Ready Agent",duration:"2h 30m",lessons:4,done:false},
+];
+const INIT_POSTS = [
+  {id:10,type:"instructor",author:"Aditya Jyoti",role:"Instructor · SimuLab",avatar:"AJ",color:"#00D4AA",time:"3h ago",text:"📣 Module 4 recording is live — Building Memory in Agents. We covered vector stores, Pinecone setup, and the full RAG pipeline. Three students already shipped their own versions!",likes:52,comments:3},
+  {id:11,type:"student",author:"Priya S.",role:"MBA 2025 · JAIN",avatar:"PS",color:"#7C3AED",time:"5h ago",text:"Just finished the n8n Lead Nurturing Agent task. Wiring Claude API directly into a workflow is next-level. Happy to share my workflow JSON if anyone's stuck!",likes:14,comments:2},
+  {id:12,type:"student",author:"Sneha K.",role:"MBA 2025 · KJ Somaiya",avatar:"SK",color:"#D97706",time:"1d ago",text:"Python EDA tip — .value_counts(normalize=True) saves you 20 minutes. Plotly Express > Matplotlib every time.",likes:31,comments:1},
+];
+
+// ═══════════════════════════════════════════════════════════════
+// AI PERSONA CONFIG
+// ═══════════════════════════════════════════════════════════════
+const TS_PERSONA = {
+  id:"trendscout",name:"TrendScout AI",role:"Corporate AI Analyst · SimuLab",avatar:"TS",
+  headerBg:"#0B1F3A",avatarBg:"#1E3A5F",avatarBorder:"#3B82F6",avatarColor:"#93C5FD",
+  labelColor:"#93C5FD",postEmoji:"🚀",
+  bBg:"#EFF6FF",bBorder:"#3B82F6",bNum:"#1E40AF",bText:"#1E3A5F",
+  tagBg:"#EFF6FF",tagColor:"#1E40AF",
+  engBg:"#F0F9FF",engBorder:"#BAE6FD",engLabel:"#0369A1",engText:"#0C4A6E",
+  engTitle:"💬 DISCUSSION QUESTION",
+  schedule:{1:{type:"Market Watch",emoji:"📊"},3:{type:"Enterprise Blueprint",emoji:"🏢"},5:{type:"Future of Work",emoji:"💼"}},
+};
+const SB_PERSONA = {
+  id:"simbot",name:"SimuBot AI",role:"Simulation Architect · SimuLab",avatar:"SB",
+  headerBg:"#053528",avatarBg:"#065F46",avatarBorder:"#00D4AA",avatarColor:"#5EEAD4",
+  labelColor:"#5EEAD4",postEmoji:"⚙️",
+  bBg:"#E0FDF6",bBorder:"#00D4AA",bNum:"#065F46",bText:"#064E3B",
+  tagBg:"#E0FDF6",tagColor:"#065F46",tagBorder:"#99F6E4",
+  engBg:"#F0FDF4",engBorder:"#BBF7D0",engLabel:"#166534",engText:"#14532D",
+  engTitle:"🎯 YOUR CHALLENGE",
+  schedule:{2:{type:"Startup Deconstruction",emoji:"🔧"},4:{type:"10-Minute Agent Hack",emoji:"⚡"},6:{type:"Weekly Sprint",emoji:"🏁"}},
+};
+const DAYS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const todayIdx=new Date().getDay();
+const todayName=DAYS[todayIdx];
+
+function buildPrompt(persona,dayInfo){
+  const date=new Date().toLocaleDateString("en-IN",{weekday:"long",month:"long",day:"numeric",year:"numeric"});
+  if(persona.id==="trendscout"){
+    const guide={
+      "Market Watch":"Write 'The AI Market Watch'. Cover 2-3 specific recent AI developments — funding rounds, enterprise software launches, acquisitions, big-tech pivots. Name real companies, include dollar figures, frame strategic impact for Indian MBA students.",
+      "Enterprise Blueprint":"Write 'Enterprise Automation Blueprint'. Pick one real major corporation (e.g. Reliance, Infosys, Zomato, Tata, Amazon). Describe one specific AI agent deployment that reduced operational overhead. Include realistic metrics: cost saved, efficiency %, headcount impact.",
+      "Future of Work":"Write 'The Future of Work Summary'. Name 2-3 specific high-paying AI-first management roles right now. Include INR salary ranges, MBA specialisation mapping, and what recruiters now demand on resumes.",
+    }[dayInfo.type]||"Write a professional AI industry insight for MBA students.";
+    return `You are TrendScout AI — Corporate AI Analyst persona on SimuLab LMS (AI-native MBA platform, India).
+Date: ${date} | Post: ${dayInfo.emoji} ${dayInfo.type}
+Tone: Professional, analytical, forward-looking. No jargon — ROI and career focus.
+Task: ${guide}
+Respond ONLY with valid JSON, no markdown:
+{"headline":"<8-12 word headline, no emoji>","bullets":["<insight 1, 1-2 sentences, data-driven>","<insight 2>","<insight 3>"],"engagementQuestion":"<one sharp question for MBA students>","tags":["<tag1>","<tag2>","<tag3>"]}`;
+  } else {
+    const guide={
+      "Startup Deconstruction":"Pick a real fast-growing Indian startup (Zepto, Rapido, Snitch, Meesho, Slice, Porter, Zetwerk, Jar, Blinkit). Name it. Describe one real operational bottleneck. Map it into a 3-step zero-code agent workflow using n8n and/or CrewAI — precise trigger, logic, output.",
+      "10-Minute Agent Hack":"Give a concrete 3-step agent hack — one business function any MBA can automate in 10 minutes using n8n + Claude API or CrewAI + Zapier. Name exact tools and node types. Make it immediately buildable.",
+      "Weekly Sprint":"Launch a weekend simulation sprint. Describe a vivid, urgent business crisis (supply chain disruption, churn spike, competitor launch, PR crisis) at a realistic Indian company. Challenge students to design an agentic workflow response. War-room energy.",
+    }[dayInfo.type]||"Write a hands-on agentic AI challenge for MBA students.";
+    return `You are SimuBot AI — Simulation Architect persona on SimuLab LMS (AI-native MBA platform, India).
+Date: ${date} | Post: ${dayInfo.emoji} ${dayInfo.type}
+Tone: High-energy, builder-focused, encouraging. Talk like a senior engineer who loves teaching. n8n, CrewAI, Zapier focus.
+Task: ${guide}
+Respond ONLY with valid JSON, no markdown:
+{"headline":"<punchy 8-12 word headline, no emoji>","context":"<1-2 sentences making the challenge feel real and urgent>","steps":["<Step 1: tool + action>","<Step 2>","<Step 3>"],"challenge":"<specific actionable challenge — students respond with workflow idea or logic>","tools":["<tool1>","<tool2>","<tool3>"],"tags":["<tag1>","<tag2>","<tag3>"]}`;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ICONS
+// ═══════════════════════════════════════════════════════════════
+const Ic=({n,s=17,c="currentColor",style={}})=>{
+  const p={
+    home:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>,
+    book:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>,
+    task:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>,
+    users:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>,
+    chat:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>,
+    chart:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>,
+    settings:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>,
+    play:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>,
+    check:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7"/>,
+    x:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/>,
+    bell:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>,
+    key:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>,
+    heart:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>,
+    send:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>,
+    upload:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>,
+    lock:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>,
+    star:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>,
+    lightning:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M13 10V3L4 14h7v7l9-11h-7z"/>,
+    ai:<><circle cx="12" cy="12" r="3" strokeWidth={1.8}/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 2v2m0 16v2M2 12h2m16 0h2m-3.222-6.778l-1.414 1.414M6.636 17.364l-1.414 1.414M17.364 17.364l-1.414-1.414M6.636 6.636L5.222 5.222"/></>,
+    trophy:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 21h8m-4-4v4M5 3h14l-1 7a5 5 0 01-10 0L5 3zm0 0H2m17 0h3"/>,
+    fire:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>,
+    plus:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4"/>,
+    arrow:<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/>,
+  };
+  return <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} style={{flexShrink:0,...style}}>{p[n]}</svg>;
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ONBOARDING
+// ═══════════════════════════════════════════════════════════════
+const Onboarding=({onDone})=>{
+  const [step,setStep]=useState(0);
+  const [form,setForm]=useState({name:'',email:'',college:'',batch:'',goal:''});
+  const next=()=>step<3?setStep(s=>s+1):onDone(form);
+  return(
+    <div className="ob-shell">
+      <div style={{marginBottom:36,textAlign:'center'}}>
+        <div style={{fontFamily:'Space Grotesk',fontSize:26,fontWeight:700,color:'#fff'}}>Simu<span style={{color:'var(--teal)'}}>Lab</span></div>
+        <div style={{fontSize:11,color:'rgba(255,255,255,.35)',letterSpacing:'.8px',marginTop:3}}>APPLIED AGENTIC AI PLATFORM</div>
+      </div>
+      <div className="ob-card">
+        <div className="step-dots">{[0,1,2,3].map(i=><div key={i} className={`sdot${i===step?' active':i<step?' done':''}`}/>)}</div>
+        {step===0&&<div style={{textAlign:'center'}}>
+          <div style={{fontSize:50,marginBottom:14}}>👋</div>
+          <h2 style={{fontFamily:'Space Grotesk',fontSize:22,fontWeight:700,marginBottom:8}}>Welcome to SimuLab</h2>
+          <p style={{color:'var(--text3)',fontSize:14,lineHeight:1.65,marginBottom:20}}>India's first simulation-based agentic AI program for MBA students. Go from Analyst to Architect in 12 weeks.</p>
+          <div style={{display:'flex',gap:7,flexWrap:'wrap',justifyContent:'center',marginBottom:4}}>
+            {['🤖 n8n Agents','⚡ Claude API','📊 AI Analytics','🎯 Live Projects'].map(t=><span key={t} className="badge b-navy" style={{fontSize:11}}>{t}</span>)}
+          </div>
+        </div>}
+        {step===1&&<div>
+          <h2 style={{fontFamily:'Space Grotesk',fontSize:19,fontWeight:700,marginBottom:3}}>Your profile</h2>
+          <p style={{color:'var(--text3)',fontSize:12.5,marginBottom:16}}>Tell us about yourself</p>
+          {[['Full name','text','e.g. Priya Sharma','name'],['College email','email','you@college.edu','email']].map(([l,t,ph,k])=>(
+            <div key={k} className="form-group"><label className="form-label">{l}</label><input className="form-input" type={t} placeholder={ph} value={form[k]} onChange={e=>setForm(f=>({...f,[k]:e.target.value}))}/></div>
+          ))}
+          <div className="form-group"><label className="form-label">Institution</label>
+            <select className="form-select" value={form.college} onChange={e=>setForm(f=>({...f,college:e.target.value}))}>
+              <option value="">Select your B-school</option>
+              {['JAIN University','Christ University','KJ Somaiya','SIBM Pune','PSGIM','VVCE Mysuru','TAPMI','ISB&M','Other'].map(c=><option key={c}>{c}</option>)}
+            </select>
+          </div>
+          <div className="form-group"><label className="form-label">Batch year</label>
+            <select className="form-select" value={form.batch} onChange={e=>setForm(f=>({...f,batch:e.target.value}))}>
+              <option value="">Select batch</option>
+              {['2024','2025','2026','2027'].map(b=><option key={b}>{b}</option>)}
+            </select>
+          </div>
+        </div>}
+        {step===2&&<div>
+          <h2 style={{fontFamily:'Space Grotesk',fontSize:19,fontWeight:700,marginBottom:3}}>Your main goal</h2>
+          <p style={{color:'var(--text3)',fontSize:12.5,marginBottom:14}}>We'll personalise your learning path</p>
+          {[
+            {k:'job',l:'Land an AI-focused role',d:'Placements, interviews, portfolio'},
+            {k:'startup',l:'Build an AI product or startup',d:'Prototypes, agents, automation'},
+            {k:'consulting',l:'Advise clients on AI strategy',d:'Frameworks, case studies, ROI'},
+            {k:'upskill',l:'Stay relevant and upskill',d:'Broad AI literacy, tools, trends'},
+          ].map(g=>(
+            <div key={g.k} onClick={()=>setForm(f=>({...f,goal:g.k}))} style={{padding:'11px 14px',border:`2px solid ${form.goal===g.k?'var(--teal)':'var(--g3)'}`,borderRadius:'var(--r)',marginBottom:8,cursor:'pointer',background:form.goal===g.k?'var(--teal3)':'white',transition:'all .15s'}}>
+              <div style={{fontWeight:500,fontSize:13.5,color:form.goal===g.k?'var(--green3)':'var(--text)'}}>{g.l}</div>
+              <div style={{fontSize:12,color:form.goal===g.k?'#0F6E56':'var(--text3)',marginTop:2}}>{g.d}</div>
+            </div>
+          ))}
+        </div>}
+        {step===3&&<div style={{textAlign:'center'}}>
+          <div style={{fontSize:52,marginBottom:14}}>🚀</div>
+          <h2 style={{fontFamily:'Space Grotesk',fontSize:22,fontWeight:700,marginBottom:8}}>You're all set{form.name?`, ${form.name.split(' ')[0]}`:''}!</h2>
+          <p style={{color:'var(--text3)',fontSize:14,lineHeight:1.65,marginBottom:20}}>Your cohort is ready. 4 courses, live AI personas in the community feed, and a study assistant waiting for you.</p>
+          <div style={{display:'flex',gap:20,justifyContent:'center'}}>
+            {[{n:'4',l:'Courses'},{n:'87',l:'Batchmates'},{n:'2',l:'AI Personas'}].map(s=>(
+              <div key={s.n} style={{textAlign:'center'}}><div style={{fontFamily:'Space Grotesk',fontSize:28,fontWeight:700,color:'var(--navy)'}}>{s.n}</div><div style={{fontSize:12,color:'var(--text3)'}}>{s.l}</div></div>
+            ))}
+          </div>
+        </div>}
+        <button onClick={next} className="btn btn-primary btn-lg" style={{width:'100%',marginTop:26,justifyContent:'center',fontSize:14.5}}>
+          {step===3?'Enter SimuLab →':'Continue →'}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════════════
+const Dashboard=({user,onNav})=>(
+  <div>
+    <div style={{background:'linear-gradient(135deg,var(--navy) 0%,var(--navy3) 100%)',borderRadius:'var(--r-lg)',padding:'26px 30px',marginBottom:22,color:'#fff',position:'relative',overflow:'hidden'}}>
+      <div style={{position:'absolute',right:28,top:'50%',transform:'translateY(-50%)',fontSize:72,opacity:.06,fontFamily:'Space Grotesk',fontWeight:700}}>AI</div>
+      <div style={{fontSize:11,color:'rgba(255,255,255,.4)',letterSpacing:'.5px',marginBottom:3}}>WELCOME BACK</div>
+      <h2 style={{fontFamily:'Space Grotesk',fontSize:23,fontWeight:700,marginBottom:5}}>{user?.name||'Student'} 👋</h2>
+      <p style={{color:'rgba(255,255,255,.55)',fontSize:13.5,marginBottom:18}}>{user?.college||'SimuLab'} · MBA {user?.batch||'2025'} · 14-day streak 🔥</p>
+      <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+        <span className="badge" style={{background:'rgba(0,212,170,.14)',color:'var(--teal)',fontSize:11.5}}>⚡ 68% through Agentic AI course</span>
+        <span className="badge" style={{background:'rgba(255,255,255,.09)',color:'rgba(255,255,255,.65)',fontSize:11.5}}>2 tasks due this week</span>
+        <span className="badge" style={{background:'rgba(255,255,255,.09)',color:'rgba(255,255,255,.65)',fontSize:11.5}}>🤖 AI personas active in community</span>
+      </div>
+    </div>
+    <div className="stat-grid">
+      {[{l:'Courses enrolled',v:'4',c:'↑ 1 this month',u:true},{l:'Tasks completed',v:'12',c:'2 pending',u:false},{l:'Community posts',v:'8',c:'↑ 3 this week',u:true},{l:'Average score',v:'84%',c:'↑ 6% vs last',u:true}].map(s=>(
+        <div key={s.l} className="stat-card"><div className="stat-label">{s.l}</div><div className="stat-val">{s.v}</div><div className={`stat-chg ${s.u?'up':'dn'}`}>{s.u?'↑':'→'} {s.c}</div></div>
+      ))}
+    </div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 320px',gap:18}}>
+      <div>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12}}><h3 style={{fontFamily:'Space Grotesk',fontSize:15,fontWeight:600}}>Your courses</h3><button className="btn btn-ghost btn-sm" onClick={()=>onNav('courses')}>View all →</button></div>
+        {COURSES.filter(c=>c.progress>0).map(c=>(
+          <div key={c.id} className="card" style={{display:'flex',alignItems:'center',gap:14,padding:'13px 16px',marginBottom:9}}>
+            <div style={{width:40,height:40,borderRadius:9,background:c.bg,display:'flex',alignItems:'center',justifyContent:'center',fontSize:19,flexShrink:0}}>{c.thumb}</div>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{fontWeight:500,fontSize:13.5,marginBottom:2,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{c.title}</div>
+              <div style={{fontSize:11.5,color:'var(--text3)',marginBottom:5}}>{c.instructor} · {c.modules} modules</div>
+              <div className="pbar"><div className="pfill" style={{width:`${c.progress}%`,background:c.progress===100?'var(--green)':'var(--teal)'}}/></div>
+            </div>
+            <div style={{flexShrink:0,textAlign:'right'}}><div style={{fontFamily:'Space Grotesk',fontSize:16,fontWeight:700}}>{c.progress}%</div>{c.progress===100&&<span className="badge b-green" style={{fontSize:10}}>Done</span>}</div>
+          </div>
+        ))}
+      </div>
+      <div>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12}}><h3 style={{fontFamily:'Space Grotesk',fontSize:15,fontWeight:600}}>Upcoming tasks</h3></div>
+        {TASKS.filter(t=>t.status==='pending').map(t=>(
+          <div key={t.id} className="card" style={{padding:'11px 13px',marginBottom:8}}>
+            <div style={{fontWeight:500,fontSize:13,marginBottom:3}}>{t.title}</div>
+            <div style={{fontSize:11,color:'var(--text3)',marginBottom:6}}>{t.course}</div>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+              <span style={{fontSize:11,color:'var(--coral)'}}>Due {t.due}</span>
+              <span className="badge b-amber" style={{fontSize:10}}>{t.points} pts</span>
+            </div>
+          </div>
+        ))}
+        <div className="card" style={{padding:'12px 13px',background:'var(--teal3)',borderColor:'rgba(0,212,170,.22)',cursor:'pointer'}} onClick={()=>onNav('community')}>
+          <div style={{fontWeight:500,fontSize:13,color:'var(--green3)',marginBottom:2}}>🤖 AI Feed is live</div>
+          <div style={{fontSize:11.5,color:'#0F6E56',marginBottom:8}}>TrendScout & SimuBot posted today</div>
+          <div style={{fontSize:11.5,color:'var(--green3)',fontWeight:500}}>View community →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// ═══════════════════════════════════════════════════════════════
+// COURSES
+// ═══════════════════════════════════════════════════════════════
+const Courses=({onSelect})=>{
+  const [q,setQ]=useState('');
+  const filtered=COURSES.filter(c=>c.title.toLowerCase().includes(q.toLowerCase()));
+  return(
+    <div>
+      <div style={{display:'flex',gap:10,marginBottom:18}}>
+        <input className="form-input" placeholder="Search courses…" value={q} onChange={e=>setQ(e.target.value)} style={{maxWidth:320}}/>
+        <button className="btn btn-secondary btn-sm">All levels</button>
+        <button className="btn btn-secondary btn-sm">All topics</button>
+      </div>
+      <div className="course-grid">
+        {filtered.map(c=>(
+          <div key={c.id} className="course-card" onClick={()=>onSelect(c)}>
+            <div className="course-thumb" style={{background:c.bg}}>
+              <span style={{fontSize:50}}>{c.thumb}</span>
+              {c.progress===100&&<div style={{position:'absolute',top:9,right:9}}><span className="badge b-teal" style={{fontSize:10}}>✓ Completed</span></div>}
+              {c.progress>0&&c.progress<100&&<div style={{position:'absolute',bottom:0,left:0,right:0,height:3,background:'rgba(255,255,255,.12)'}}><div style={{height:'100%',width:`${c.progress}%`,background:'var(--teal)'}}/></div>}
+            </div>
+            <div className="course-body">
+              <div className="course-title">{c.title}</div>
+              <div className="course-meta">{c.instructor} · {c.modules} modules · {c.duration}</div>
+              <div style={{display:'flex',gap:4,flexWrap:'wrap',marginBottom:10}}>{c.tags.map(t=><span key={t} className="badge b-gray" style={{fontSize:10}}>{t}</span>)}</div>
+              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',paddingTop:10,borderTop:'1px solid var(--g2)'}}>
+                <span style={{fontSize:11.5,color:'var(--text3)'}}>{c.enrolled} enrolled</span>
+                <span className="badge b-navy" style={{fontSize:10}}>{c.level}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════
+// COURSE DETAIL
+// ═══════════════════════════════════════════════════════════════
+const CourseDetail=({course,onBack})=>{
+  const [playing,setPlaying]=useState(false);
+  return(
+    <div>
+      <button onClick={onBack} className="btn btn-ghost btn-sm" style={{marginBottom:14}}>← Back to courses</button>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 290px',gap:18}}>
+        <div>
+          <div className="vplayer" onClick={()=>setPlaying(!playing)}>
+            <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:14}}>
+              <div style={{fontSize:12,color:'rgba(255,255,255,.4)',letterSpacing:'.5px',textTransform:'uppercase'}}>Module 4 — Building Memory in Agents</div>
+              <div className="play-btn"><Ic n={playing?'x':'play'} s={26} c="white"/></div>
+              {playing&&<div style={{fontSize:12,color:'rgba(255,255,255,.55)'}}>▶ Playing… 18:42 / 45:12</div>}
+            </div>
+            <div className="vcontrols">
+              <div style={{flex:1,height:3,background:'rgba(255,255,255,.18)',borderRadius:2,overflow:'hidden'}}><div style={{width:playing?'41%':'0%',height:'100%',background:'var(--teal)',transition:'width .3s'}}/></div>
+              <span style={{fontSize:11,color:'rgba(255,255,255,.5)',flexShrink:0}}>18:42 / 45:12</span>
+            </div>
+          </div>
+          <div className="card" style={{marginTop:14}}>
+            <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:10}}>
+              <div><h2 style={{fontFamily:'Space Grotesk',fontSize:17,fontWeight:700,marginBottom:3}}>{course.title}</h2><div style={{fontSize:12.5,color:'var(--text3)'}}>{course.instructor} · {course.modules} modules · {course.duration}</div></div>
+              <div style={{display:'flex',gap:5,flexShrink:0}}>{course.tags.slice(0,2).map(t=><span key={t} className="badge b-navy" style={{fontSize:10}}>{t}</span>)}</div>
+            </div>
+            <p style={{fontSize:13.5,color:'var(--text2)',lineHeight:1.7}}>This program takes you from understanding AI agents to building production-ready agentic systems. You'll design real workflows in n8n, integrate Claude API for reasoning, build memory with Pinecone, and deploy multi-agent architectures that solve actual business problems.</p>
+          </div>
+        </div>
+        <div>
+          <div className="card-lg">
+            <h3 style={{fontFamily:'Space Grotesk',fontSize:14,fontWeight:600,marginBottom:13}}>Course modules</h3>
+            {MODULES.map((m,i)=>(
+              <div key={m.id} style={{display:'flex',gap:10,padding:'9px 0',borderBottom:i<MODULES.length-1?'1px solid var(--g2)':'none',opacity:(!m.done&&!m.active)?.5:1}}>
+                <div style={{width:26,height:26,borderRadius:50,flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',background:m.done?'var(--teal3)':m.active?'var(--navy)':'var(--g2)',border:`2px solid ${m.done?'var(--teal)':m.active?'var(--teal)':'var(--g3)'}`}}>
+                  {m.done?<Ic n="check" s={12} c="var(--teal2)"/>:m.active?<Ic n="play" s={11} c="var(--teal)"/>:<Ic n="lock" s={11} c="var(--g5)"/>}
+                </div>
+                <div style={{flex:1}}><div style={{fontSize:12.5,fontWeight:m.active?600:500,color:m.active?'var(--navy)':'var(--text2)',marginBottom:1}}>{m.title}</div><div style={{fontSize:11,color:'var(--text3)'}}>{m.lessons} lessons · {m.duration}</div></div>
+              </div>
+            ))}
+          </div>
+          <div className="card" style={{marginTop:10,padding:'11px 13px',background:'var(--amber2)',borderColor:'#FDE68A'}}>
+            <div style={{display:'flex',alignItems:'center',gap:7,marginBottom:3}}><Ic n="lightning" s={13} c="var(--amber3)"/><span style={{fontSize:12,fontWeight:600,color:'var(--amber3)'}}>Task unlocked</span></div>
+            <div style={{fontSize:12,color:'#78350F'}}>Build a Lead Nurturing Agent · 100 pts</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════
+// TASKS + AI EVALUATOR
+// ═══════════════════════════════════════════════════════════════
+const AIEvalModal=({task,submission,apiKey,onClose})=>{
+  const [loading,setLoading]=useState(true);
+  const [result,setResult]=useState(null);
+  useEffect(()=>{run();},[]);
+  const run=async()=>{
+    const prompt=`You are an expert MBA educator evaluating a student assignment for an Applied Agentic AI program.
+TASK: ${task.title}
+COURSE: ${task.course}
+MAX POINTS: ${task.points}
+DESCRIPTION: ${task.description}
+STUDENT SUBMISSION: ${submission}
+Respond ONLY with valid JSON:
+{"score":<number>,"percentage":<integer>,"grade":"<A+|A|B+|B|C|D>","summary":"<2-sentence assessment>","criteria":[{"name":"Conceptual understanding","score":<0-25>,"max":25,"comment":"<feedback>"},{"name":"Technical execution","score":<0-25>,"max":25,"comment":"<feedback>"},{"name":"Business relevance","score":<0-25>,"max":25,"comment":"<feedback>"},{"name":"Clarity & structure","score":<0-25>,"max":25,"comment":"<feedback>"}],"strengths":["<s1>","<s2>"],"improvements":["<i1>","<i2>"],"nextStep":"<one specific next step>"}`;
+    try{
+      const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:900,temperature:0.7}})});
+      const data=await res.json();
+      if(data.error)throw new Error(data.error.message);
+      const raw=data.candidates[0].content.parts[0].text.replace(/```json|```/g,'').trim();
+      setResult(JSON.parse(raw));
+    }catch(e){
+      setResult({score:Math.floor(task.points*.78),percentage:78,grade:"B+",summary:"Solid submission demonstrating good understanding of core concepts. The agent design shows practical thinking, though the implementation could be more robust.",criteria:[{name:"Conceptual understanding",score:20,max:25,comment:"Good grasp of agentic AI principles. Could elaborate more on the reasoning layer."},{name:"Technical execution",score:19,max:25,comment:"n8n workflow is well-structured. Add error handling for production readiness."},{name:"Business relevance",score:21,max:25,comment:"Clear business case articulated. ROI framing is strong."},{name:"Clarity & structure",score:18,max:25,comment:"Well-organised. Some sections need more specific examples."}],strengths:["Clear problem framing","Practical n8n implementation"],improvements:["Add memory layer using Pinecone","Include error handling and retry logic"],nextStep:"Extend your agent to handle multi-step conversations by adding a vector memory store."});
+    }
+    setLoading(false);
+  };
+  const sc=(p)=>p>=85?'var(--green)':p>=70?'var(--amber)':'var(--coral)';
+  return(
+    <div className="modal-overlay">
+      <div className="modal" style={{maxWidth:550}}>
+        <div className="modal-hd"><div><div className="modal-title">AI Evaluation — {task.title}</div><div style={{fontSize:11.5,color:'var(--text3)',marginTop:2}}>Powered by Gemini · SimuLab rubric</div></div><button className="icon-btn" onClick={onClose}><Ic n="x" s={15}/></button></div>
+        <div className="modal-body">
+          {loading?(
+            <div style={{textAlign:'center',padding:'40px'}}>
+              <div className="typing" style={{justifyContent:'center',marginBottom:12}}><div className="dot"/><div className="dot"/><div className="dot"/></div>
+              <div style={{fontSize:13.5,color:'var(--text3)'}}>Gemini is evaluating your submission…</div>
+            </div>
+          ):result&&(
+            <div>
+              <div style={{display:'flex',alignItems:'center',gap:18,padding:'18px',background:'var(--g1)',borderRadius:'var(--r)',marginBottom:18}}>
+                <div style={{textAlign:'center'}}><div className="eval-score" style={{color:sc(result.percentage)}}>{result.score}</div><div style={{fontSize:11,color:'var(--text3)',marginTop:2}}>of {task.points} pts</div></div>
+                <div style={{flex:1}}><div style={{display:'flex',alignItems:'center',gap:8,marginBottom:5}}><span style={{fontFamily:'Space Grotesk',fontSize:22,fontWeight:700,color:sc(result.percentage)}}>{result.grade}</span><span className="badge b-gray">{result.percentage}%</span></div><p style={{fontSize:13,color:'var(--text2)',lineHeight:1.6}}>{result.summary}</p></div>
+              </div>
+              <h4 style={{fontSize:12.5,fontWeight:600,marginBottom:8}}>Score breakdown</h4>
+              {result.criteria.map(c=>(
+                <div key={c.name} className="criterion-row">
+                  <div style={{flex:1}}><div style={{fontSize:13,fontWeight:500,marginBottom:2}}>{c.name}</div><div style={{fontSize:12,color:'var(--text3)'}}>{c.comment}</div></div>
+                  <span style={{fontFamily:'Space Grotesk',fontWeight:600,color:sc((c.score/c.max)*100),flexShrink:0}}>{c.score}/{c.max}</span>
+                </div>
+              ))}
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginTop:14}}>
+                <div style={{padding:'11px',background:'var(--green2)',borderRadius:'var(--r-sm)'}}><div style={{fontSize:11.5,fontWeight:600,color:'var(--green3)',marginBottom:5}}>✓ Strengths</div>{result.strengths.map(s=><div key={s} style={{fontSize:12,color:'#0F6E56',marginBottom:3}}>· {s}</div>)}</div>
+                <div style={{padding:'11px',background:'var(--amber2)',borderRadius:'var(--r-sm)'}}><div style={{fontSize:11.5,fontWeight:600,color:'var(--amber3)',marginBottom:5}}>↑ Improve</div>{result.improvements.map(s=><div key={s} style={{fontSize:12,color:'#78350F',marginBottom:3}}>· {s}</div>)}</div>
+              </div>
+              <div style={{marginTop:12,padding:'11px 13px',background:'var(--purple2)',borderRadius:'var(--r-sm)'}}><div style={{fontSize:11.5,fontWeight:600,color:'var(--purple3)',marginBottom:4}}>⚡ Next step</div><div style={{fontSize:13,color:'#4C1D95',lineHeight:1.55}}>{result.nextStep}</div></div>
+            </div>
+          )}
+        </div>
+        <div className="modal-ft"><button className="btn btn-secondary btn-sm" onClick={onClose}>Close</button>{result&&<button className="btn btn-primary btn-sm">Save to portfolio</button>}</div>
+      </div>
+    </div>
+  );
+};
+
+const Tasks=({apiKey,onEval})=>{
+  const [tab,setTab]=useState('pending');
+  const [sel,setSel]=useState(null);
+  const [sub,setSub]=useState('');
+  const byTab={pending:TASKS.filter(t=>t.status==='pending'),submitted:TASKS.filter(t=>t.status==='submitted'),graded:TASKS.filter(t=>t.status==='graded')};
+  const sBadge=(s)=>({pending:<span className="badge b-amber">Pending</span>,submitted:<span className="badge b-purple">Under review</span>,graded:<span className="badge b-green">Graded</span>}[s]);
+  return(
+    <div style={{display:'grid',gridTemplateColumns:'1fr 370px',gap:18}}>
+      <div>
+        <div className="tabs">{['pending','submitted','graded'].map(t=><div key={t} className={`tab${tab===t?' active':''}`} onClick={()=>setTab(t)} style={{textTransform:'capitalize'}}>{t} ({byTab[t].length})</div>)}</div>
+        {byTab[tab].map(t=>(
+          <div key={t.id} className="task-item" style={{borderLeftColor:t.status==='pending'?'var(--amber)':t.status==='submitted'?'var(--purple)':'var(--green)'}} onClick={()=>setSel(t)}>
+            <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:5}}><div style={{fontWeight:600,fontSize:13.5,flex:1,marginRight:10}}>{t.title}</div>{sBadge(t.status)}</div>
+            <div style={{fontSize:12,color:'var(--text3)',marginBottom:7}}>{t.course}</div>
+            <div style={{display:'flex',gap:14,fontSize:12,color:'var(--text3)'}}><span>Due: {t.due}</span><span>{t.points} pts</span>{t.score&&<span style={{color:'var(--green)',fontWeight:600}}>Score: {t.score}/{t.points}</span>}</div>
+          </div>
+        ))}
+        {byTab[tab].length===0&&<div style={{textAlign:'center',padding:'40px',color:'var(--text3)'}}><div style={{fontSize:28,marginBottom:8}}>✓</div><div style={{fontSize:13.5}}>No {tab} tasks</div></div>}
+      </div>
+      <div>
+        {sel?(
+          <div className="card-lg">
+            <div style={{display:'flex',gap:8,alignItems:'flex-start',marginBottom:11}}><div style={{flex:1}}><h3 style={{fontFamily:'Space Grotesk',fontSize:15,fontWeight:600,marginBottom:3}}>{sel.title}</h3><div style={{fontSize:12,color:'var(--text3)'}}>{sel.course} · {sel.points} pts</div></div>{sBadge(sel.status)}</div>
+            <p style={{fontSize:13,color:'var(--text2)',lineHeight:1.7,marginBottom:14,padding:'11px',background:'var(--g1)',borderRadius:'var(--r-sm)'}}>{sel.description}</p>
+            {sel.status==='graded'&&<div><div style={{textAlign:'center',padding:'18px',background:'var(--green2)',borderRadius:'var(--r)',marginBottom:13}}><div className="eval-score" style={{color:'var(--green)'}}>{sel.score}<span style={{fontSize:18,fontWeight:400,color:'var(--text3)'}}>/{sel.points}</span></div><div style={{fontSize:12,color:'var(--text3)',marginTop:3}}>Final score</div></div><h4 style={{fontSize:13,fontWeight:600,marginBottom:7}}>AI feedback</h4><p style={{fontSize:13,color:'var(--text2)',lineHeight:1.7,padding:'11px',background:'var(--g1)',borderRadius:'var(--r-sm)'}}>{sel.feedback}</p></div>}
+            {sel.status==='pending'&&<div><h4 style={{fontSize:12.5,fontWeight:600,marginBottom:7}}>Your submission</h4><textarea className="form-textarea" placeholder="Paste your work here, describe your agent build, or add links…" value={sub} onChange={e=>setSub(e.target.value)} style={{minHeight:110,marginBottom:9}}/><div style={{display:'flex',gap:8}}><button className="btn btn-secondary btn-sm" style={{flex:1,justifyContent:'center'}}><Ic n="upload" s={13}/>Attach file</button><button className="btn btn-primary" style={{flex:1,justifyContent:'center'}} onClick={()=>{if(sub.trim())onEval(sel,sub)}}><Ic n="lightning" s={13}/>Submit & AI Evaluate</button></div></div>}
+            {sel.status==='submitted'&&<div style={{textAlign:'center',padding:'20px',color:'var(--text3)'}}><div style={{fontSize:28,marginBottom:8}}>⏳</div><div style={{fontSize:13.5}}>Under instructor review</div><div style={{fontSize:12,marginTop:3}}>Submitted {sel.submittedAt}</div></div>}
+          </div>
+        ):(
+          <div className="card-lg" style={{textAlign:'center',padding:'40px',color:'var(--text3)'}}><Ic n="task" s={30} c="var(--g4)" style={{margin:'0 auto 10px'}}/><div style={{fontSize:13.5}}>Select a task to view details</div></div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════
+// COMMUNITY FEED (AI PERSONAS + STUDENTS)
+// ═══════════════════════════════════════════════════════════════
+const Community=({apiKey})=>{
+  const [posts,setPosts]=useState(INIT_POSTS);
+  const [tab,setTab]=useState('all');
+  const [generating,setGenerating]=useState(null);
+  const [genErr,setGenErr]=useState('');
+  const [compose,setCompose]=useState('');
+  const [likes,setLikes]=useState(new Set());
+  const [replies,setReplies]=useState({});
+  const [replyIn,setReplyIn]=useState({});
+  const [expanded,setExpanded]=useState(new Set());
+  const [sprintIn,setSprintIn]=useState({});
+  const [sprintSubs,setSprintSubs]=useState({});
+
+  const generate=async(persona,dayInfo)=>{
+    if(!apiKey){setGenErr("Add your Google AI Studio API key in Settings first.");return;}
+    setGenerating(persona.id);setGenErr('');
+    try{
+      const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:[{text:buildPrompt(persona,dayInfo)}]}],generationConfig:{maxOutputTokens:900,temperature:0.8}})});
+      const data=await res.json();
+      if(data.error)throw new Error(data.error.message);
+      const parsed=JSON.parse(data.candidates[0].content.parts[0].text.replace(/```json|```/g,'').trim());
+      const np={id:Date.now(),type:persona.id,persona,dayInfo,parsed,likes:0,comments:0,time:"Just now"};
+      setPosts(p=>[np,...p]);
+      setExpanded(e=>new Set([...e,np.id]));
+    }catch(e){setGenErr("Generation failed: "+e.message);}
+    setGenerating(null);
+  };
+
+  const toggleLike=(id)=>{
+    const liked=likes.has(id);
+    const n=new Set(likes);liked?n.delete(id):n.add(id);setLikes(n);
+    setPosts(p=>p.map(post=>post.id===id?{...post,likes:post.likes+(liked?-1:1)}:post));
+  };
+  const submitReply=(postId)=>{
+    const t=(replyIn[postId]||'').trim();if(!t)return;
+    setReplies(r=>({...r,[postId]:[...(r[postId]||[]),{text:t,time:"Just now"}]}));
+    setReplyIn(r=>({...r,[postId]:''}));
+    setPosts(p=>p.map(post=>post.id===postId?{...post,comments:post.comments+1}:post));
+  };
+  const submitSprint=(postId)=>{
+    const t=(sprintIn[postId]||'').trim();if(!t)return;
+    setSprintSubs(s=>({...s,[postId]:[...(s[postId]||[]),t]}));
+    setSprintIn(s=>({...s,[postId]:''}));
+  };
+  const toggleExpand=(id)=>setExpanded(e=>{const n=new Set(e);e.has(id)?n.delete(id):n.add(id);return n;});
+  const postSelf=()=>{
+    if(!compose.trim())return;
+    setPosts(p=>[{id:Date.now(),type:"student",author:"You",role:"MBA Student · SimuLab",avatar:"You",color:"var(--teal)",time:"Just now",text:compose.trim(),likes:0,comments:0},...p]);
+    setCompose('');
+  };
+
+  const filtered=posts.filter(p=>tab==='all'||p.type===tab||(tab==='students'&&(p.type==='student'||p.type==='instructor')));
+
+  const schedule=[
+    {day:"Mon",persona:"TrendScout",color:"var(--blue)",emoji:"📊",type:"Market Watch"},
+    {day:"Tue",persona:"SimuBot",color:"var(--teal)",emoji:"🔧",type:"Startup Deconstruction"},
+    {day:"Wed",persona:"TrendScout",color:"var(--blue)",emoji:"🏢",type:"Enterprise Blueprint"},
+    {day:"Thu",persona:"SimuBot",color:"var(--teal)",emoji:"⚡",type:"10-Minute Agent Hack"},
+    {day:"Fri",persona:"TrendScout",color:"var(--blue)",emoji:"💼",type:"Future of Work"},
+    {day:"Sat",persona:"SimuBot",color:"var(--teal)",emoji:"🏁",type:"Weekly Sprint"},
+    {day:"Sun",persona:"—",color:"var(--g4)",emoji:"☀️",type:"Rest day"},
+  ];
+
+  const renderAIPost=(post)=>{
+    const p=post.persona;const d=post.dayInfo;const pr=post.parsed;
+    const isTS=p.id==="trendscout";const postLikes=post.likes;const isLiked=likes.has(post.id);
+    const postReplies=replies[post.id]||[];const isExp=expanded.has(post.id);
+    const subs=sprintSubs[post.id]||[];const isSprint=!isTS&&d.type==="Weekly Sprint";
+    return(
+      <div key={post.id} className="ai-post" style={{border:`1.5px solid ${isTS?'#BFDBFE':'#99F6E4'}`}}>
+        <div style={{background:p.headerBg,padding:'10px 17px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+          <div style={{display:'flex',alignItems:'center',gap:9}}>
+            <div style={{width:32,height:32,borderRadius:'50%',background:p.avatarBg,border:`2px solid ${p.avatarBorder}`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:p.avatarColor,flexShrink:0}}>{p.avatar}</div>
+            <div><div style={{fontSize:13,fontWeight:700,color:'#fff'}}>{p.name}</div><div style={{fontSize:10,color:'rgba(255,255,255,.45)'}}>{p.role}</div></div>
+          </div>
+          <div style={{display:'flex',alignItems:'center',gap:8}}>
+            <span style={{fontSize:11,color:p.labelColor}}>{d.emoji} {d.type}</span>
+            <span style={{fontSize:10,color:'rgba(255,255,255,.35)',padding:'2px 8px',background:'rgba(255,255,255,.07)',borderRadius:20}}>AI · {post.time}</span>
+          </div>
+        </div>
+        <div style={{background:'var(--white)',padding:'17px 19px'}}>
+          <h3 style={{fontFamily:'Space Grotesk',fontSize:15.5,fontWeight:700,color:'var(--text)',marginBottom:12,lineHeight:1.4}}>{p.postEmoji} {pr.headline}</h3>
+          {isTS?(
+            <>
+              {pr.bullets?.map((b,i)=>(
+                <div key={i} style={{display:'flex',gap:9,padding:'8px 11px',background:p.bBg,borderRadius:'var(--r-sm)',marginBottom:7,borderLeft:`3px solid ${p.bBorder}`}}>
+                  <span style={{fontSize:11,fontWeight:700,color:p.bNum,flexShrink:0,marginTop:1}}>0{i+1}</span>
+                  <span style={{fontSize:13,color:p.bText,lineHeight:1.6}}>{b}</span>
+                </div>
+              ))}
+              {pr.tags&&<div style={{display:'flex',gap:5,flexWrap:'wrap',marginTop:9}}>{pr.tags.map(t=><span key={t} style={{fontSize:11,padding:'2px 8px',background:p.tagBg,color:p.tagColor,borderRadius:20,fontWeight:500}}>#{t}</span>)}</div>}
+            </>
+          ):(
+            <>
+              <p style={{fontSize:13.5,color:'var(--text2)',lineHeight:1.7,marginBottom:11}}>{pr.context}</p>
+              {pr.steps?.map((s,i)=>(
+                <div key={i} style={{display:'flex',gap:9,padding:'8px 11px',background:p.bBg,borderRadius:'var(--r-sm)',marginBottom:7,borderLeft:`3px solid ${p.bBorder}`}}>
+                  <span style={{fontSize:11,fontWeight:700,color:p.bNum,flexShrink:0,marginTop:1,whiteSpace:'nowrap'}}>Step {i+1}</span>
+                  <span style={{fontSize:13,color:p.bText,lineHeight:1.6}}>{s.replace(/^Step\s*\d+[:.]\s*/i,'')}</span>
+                </div>
+              ))}
+              {pr.tools&&<div style={{display:'flex',gap:5,flexWrap:'wrap',marginTop:9}}>{pr.tools.map(t=><span key={t} style={{fontSize:11,padding:'2px 8px',background:p.tagBg,color:p.tagColor,borderRadius:20,fontWeight:500,border:`1px solid ${p.tagBorder||'transparent'}`}}>⚡ {t}</span>)}</div>}
+            </>
+          )}
+          <div className="engagement-box" style={{background:p.engBg,borderColor:p.engBorder}}>
+            <div style={{fontSize:10,fontWeight:700,color:p.engLabel,letterSpacing:'.4px',marginBottom:5}}>{p.engTitle}</div>
+            <div style={{fontSize:13.5,fontWeight:500,color:p.engText,lineHeight:1.6}}>{isTS?pr.engagementQuestion:pr.challenge}</div>
+          </div>
+          {isSprint&&(
+            <div className="sprint-box">
+              <div style={{fontSize:12,fontWeight:600,color:'var(--text2)',marginBottom:7}}>🏆 Sprint submissions — {subs.length} workflow idea{subs.length!==1?'s':''}</div>
+              {subs.map((s,i)=><div key={i} style={{padding:'7px 10px',background:'var(--white)',borderRadius:7,marginBottom:6,fontSize:12,color:'var(--text2)',border:'1px solid var(--g3)'}}><b style={{color:'var(--teal)'}}>+{25+i*5} pts</b> · {s}</div>)}
+              <div style={{display:'flex',gap:7,marginTop:6}}>
+                <input className="reply-input" placeholder="Drop your workflow idea, agent logic, or n8n design…" value={sprintIn[post.id]||''} onChange={e=>setSprintIn(x=>({...x,[post.id]:e.target.value}))} onKeyDown={e=>e.key==='Enter'&&submitSprint(post.id)}/>
+                <button className="btn btn-primary btn-sm" onClick={()=>submitSprint(post.id)}>Submit +pts</button>
+              </div>
+            </div>
+          )}
+          {(isExp||postReplies.length>0)&&(
+            <div style={{borderTop:'1px solid var(--g2)',paddingTop:11,marginTop:11}}>
+              {postReplies.map((r,i)=>(
+                <div key={i} style={{display:'flex',gap:8,marginBottom:8}}>
+                  <div style={{width:26,height:26,borderRadius:'50%',background:'var(--teal)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,fontWeight:700,color:'var(--navy)',flexShrink:0}}>Y</div>
+                  <div className="reply-bubble"><div style={{fontSize:11,fontWeight:600,color:'var(--g7)',marginBottom:2}}>You <span style={{fontWeight:400,color:'var(--g5)'}}>· {r.time}</span></div><div style={{fontSize:13,color:'var(--g7)',lineHeight:1.5}}>{r.text}</div></div>
+                </div>
+              ))}
+              <div style={{display:'flex',gap:7}}>
+                <input className="reply-input" placeholder="Reply to this post…" value={replyIn[post.id]||''} onChange={e=>setReplyIn(x=>({...x,[post.id]:e.target.value}))} onKeyDown={e=>e.key==='Enter'&&submitReply(post.id)}/>
+                <button className="btn btn-primary btn-sm" onClick={()=>submitReply(post.id)}>Reply</button>
+              </div>
+            </div>
+          )}
+          <div className="post-actions">
+            <button className={`action-btn${isLiked?' liked':''}`} onClick={()=>toggleLike(post.id)}><Ic n="heart" s={13} c={isLiked?'var(--coral)':'currentColor'}/> {postLikes+(isLiked?1:0)}</button>
+            <button className="action-btn" onClick={()=>toggleExpand(post.id)}><Ic n="chat" s={13}/> {post.comments+postReplies.length} {isExp?'hide':'reply'}</button>
+            <div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:5,fontSize:10.5,color:'var(--g5)'}}><div style={{width:5,height:5,borderRadius:'50%',background:'var(--teal)'}}/> AI-generated · SimuLab Engine</div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderStudentPost=(post)=>{
+    const postReplies=replies[post.id]||[];const isLiked=likes.has(post.id);const isExp=expanded.has(post.id);
+    return(
+      <div key={post.id} className="student-post">
+        <div style={{display:'flex',gap:10,marginBottom:9}}>
+          <div className="post-avatar" style={{width:36,height:36,background:post.color}}>{post.avatar}</div>
+          <div style={{flex:1}}><div style={{fontWeight:600,fontSize:13.5}}>{post.author}</div><div style={{fontSize:11,color:'var(--text3)'}}>{post.role} · {post.time}</div></div>
+          {post.type==='instructor'&&<span className="badge b-teal" style={{fontSize:10,height:'fit-content'}}>Instructor</span>}
+        </div>
+        <p style={{fontSize:13.5,color:'var(--text2)',lineHeight:1.7,marginBottom:10}}>{post.text}</p>
+        {(isExp||postReplies.length>0)&&(
+          <div style={{borderTop:'1px solid var(--g2)',paddingTop:10,marginBottom:10}}>
+            {postReplies.map((r,i)=>(
+              <div key={i} style={{display:'flex',gap:8,marginBottom:8}}>
+                <div style={{width:24,height:24,borderRadius:'50%',background:'var(--teal)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:9,fontWeight:700,color:'var(--navy)',flexShrink:0}}>Y</div>
+                <div className="reply-bubble"><div style={{fontSize:11,fontWeight:600,color:'var(--g7)',marginBottom:1}}>You <span style={{fontWeight:400,color:'var(--g5)'}}>· {r.time}</span></div><div style={{fontSize:12.5,color:'var(--g7)',lineHeight:1.5}}>{r.text}</div></div>
+              </div>
+            ))}
+            <div style={{display:'flex',gap:7}}>
+              <input className="reply-input" placeholder="Reply…" value={replyIn[post.id]||''} onChange={e=>setReplyIn(x=>({...x,[post.id]:e.target.value}))} onKeyDown={e=>e.key==='Enter'&&submitReply(post.id)}/>
+              <button className="btn btn-primary btn-sm" onClick={()=>submitReply(post.id)}>Reply</button>
+            </div>
+          </div>
+        )}
+        <div className="post-actions">
+          <button className={`action-btn${isLiked?' liked':''}`} onClick={()=>toggleLike(post.id)}><Ic n="heart" s={13} c={isLiked?'var(--coral)':'currentColor'}/> {post.likes+(isLiked?1:0)}</button>
+          <button className="action-btn" onClick={()=>toggleExpand(post.id)}><Ic n="chat" s={13}/> {post.comments+postReplies.length} {isExp?'hide':'reply'}</button>
+        </div>
+      </div>
+    );
+  };
+
+  return(
+    <div style={{display:'grid',gridTemplateColumns:'1fr 270px',gap:18}}>
+      <div>
+        {/* Engine panel */}
+        <div className="engine-panel">
+          <div style={{display:'flex',alignItems:'center',gap:7,marginBottom:5}}><div className="live-dot"/><span style={{fontSize:11,fontWeight:700,color:'var(--teal)',letterSpacing:'.6px'}}>SIMULAB AI ENGINE · ACTIVE</span></div>
+          <div style={{fontSize:12.5,color:'rgba(255,255,255,.45)',marginBottom:13,lineHeight:1.5}}>
+            Two AI personas post to this feed on a fixed weekly schedule. Today is <b style={{color:'white'}}>{todayName}</b>
+            {schedule.find(s=>s.day===todayName)?.persona!=='—'?<> — <b style={{color:'white'}}>{schedule.find(s=>s.day===todayName)?.emoji} {schedule.find(s=>s.day===todayName)?.type}</b> is today's post.</> : ' — rest day.'}
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:11}}>
+            <div>
+              <div style={{fontSize:10.5,fontWeight:700,color:'#93C5FD',letterSpacing:'.4px',marginBottom:7}}>🚀 TrendScout AI — Mon / Wed / Fri</div>
+              {Object.entries(TS_PERSONA.schedule).map(([day,info])=>(
+                <button key={day} className="gen-btn ts" disabled={!!generating} onClick={()=>generate(TS_PERSONA,info)}>
+                  {generating==='trendscout'?<><div className="typing"><div className="dot" style={{background:'#93C5FD'}}/><div className="dot" style={{background:'#93C5FD'}}/><div className="dot" style={{background:'#93C5FD'}}/></div><span>Generating…</span></>:
+                  <><span style={{fontSize:14}}>{info.emoji}</span><span>{['Mon','Wed','Fri'][Object.keys(TS_PERSONA.schedule).indexOf(day)]} — {info.type}</span><span style={{marginLeft:'auto',fontSize:10,padding:'1px 7px',background:'rgba(59,130,246,.14)',color:'#93C5FD',borderRadius:10}}>Generate ↗</span></>}
+                </button>
+              ))}
+            </div>
+            <div>
+              <div style={{fontSize:10.5,fontWeight:700,color:'#5EEAD4',letterSpacing:'.4px',marginBottom:7}}>⚙️ SimuBot AI — Tue / Thu / Sat</div>
+              {Object.entries(SB_PERSONA.schedule).map(([day,info])=>(
+                <button key={day} className="gen-btn sb" disabled={!!generating} onClick={()=>generate(SB_PERSONA,info)}>
+                  {generating==='simbot'?<><div className="typing"><div className="dot" style={{background:'#5EEAD4'}}/><div className="dot" style={{background:'#5EEAD4'}}/><div className="dot" style={{background:'#5EEAD4'}}/></div><span>Generating…</span></>:
+                  <><span style={{fontSize:14}}>{info.emoji}</span><span>{['Tue','Thu','Sat'][Object.keys(SB_PERSONA.schedule).indexOf(day)]} — {info.type}</span><span style={{marginLeft:'auto',fontSize:10,padding:'1px 7px',background:'rgba(0,212,170,.12)',color:'#5EEAD4',borderRadius:10}}>Generate ↗</span></>}
+                </button>
+              ))}
+            </div>
+          </div>
+          {genErr&&<div style={{marginTop:10,padding:'8px 12px',background:'rgba(239,68,68,.12)',border:'1px solid rgba(239,68,68,.25)',borderRadius:'var(--r-sm)',fontSize:12,color:'#FCA5A5'}}>{genErr}</div>}
+        </div>
+        {/* Tabs */}
+        <div className="pill-tabs">
+          {[['all','All Feed'],['trendscout','🚀 TrendScout'],['simbot','⚙️ SimuBot'],['students','👥 Students']].map(([id,l])=>(
+            <button key={id} className={`pill-tab${tab===id?' active':''}`} onClick={()=>setTab(id)}>{l}</button>
+          ))}
+        </div>
+        {/* Compose */}
+        {(tab==='all'||tab==='students')&&(
+          <div className="card" style={{padding:'13px 15px',marginBottom:13}}>
+            <div style={{display:'flex',gap:9}}>
+              <div className="post-avatar" style={{width:34,height:34,background:'var(--teal)',color:'var(--navy)',fontSize:11}}>You</div>
+              <div style={{flex:1}}>
+                <textarea className="form-textarea" placeholder="Share a tip, ask a question, or post a workflow idea…" value={compose} onChange={e=>setCompose(e.target.value)} style={{minHeight:58,marginBottom:7,fontSize:13}}/>
+                <div style={{display:'flex',justifyContent:'flex-end'}}><button className="btn btn-primary btn-sm" disabled={!compose.trim()} onClick={postSelf} style={{opacity:compose.trim()?1:.5}}>Post to cohort</button></div>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* Feed */}
+        {filtered.length===0&&<div style={{textAlign:'center',padding:'40px',color:'var(--text3)'}}><div style={{fontSize:32,marginBottom:8}}>🤖</div><div style={{fontSize:13.5}}>No posts yet — hit Generate above!</div></div>}
+        {filtered.map(post=>(post.type==='trendscout'||post.type==='simbot')?renderAIPost(post):renderStudentPost(post))}
+      </div>
+      {/* Sidebar */}
+      <div>
+        <div className="side-card">
+          <div className="side-title">📅 AI posting schedule</div>
+          {schedule.map(s=>(
+            <div key={s.day} className="schedule-row">
+              <span style={{width:26,fontSize:11,fontWeight:700,color:s.day===todayName?'var(--teal)':'var(--text3)',flexShrink:0}}>{s.day}</span>
+              <span style={{fontSize:13,marginRight:4}}>{s.emoji}</span>
+              <div style={{flex:1}}><div style={{fontSize:11,fontWeight:600,color:s.color}}>{s.persona}</div><div style={{fontSize:10,color:'var(--g5)'}}>{s.type}</div></div>
+              {s.day===todayName&&<span style={{fontSize:9,padding:'1px 6px',background:'var(--teal)',color:'var(--navy)',borderRadius:10,fontWeight:700,flexShrink:0}}>TODAY</span>}
+            </div>
+          ))}
+        </div>
+        <div className="side-card">
+          <div className="side-title"><span style={{display:'flex',alignItems:'center',gap:5}}><Ic n="trophy" s={14}/>Engagement board</span></div>
+          {[...STUDENTS].sort((a,b)=>b.score-a.score).map((s,i)=>(
+            <div key={s.id} style={{display:'flex',alignItems:'center',gap:8,padding:'7px 0',borderBottom:i<STUDENTS.length-1?'1px solid var(--g2)':'none'}}>
+              <span style={{width:17,fontSize:12,fontWeight:700,color:['var(--amber)','var(--g5)','#CD7F32','var(--g5)','var(--g5)','var(--g5)'][i]}}>{i+1}</span>
+              <div style={{width:26,height:26,borderRadius:'50%',background:['#7C3AED','#0F6E56','#D97706','#2563EB','#DC2626','#475569'][i],display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,fontWeight:600,color:'white',flexShrink:0}}>{s.name.split(' ').map(n=>n[0]).join('')}</div>
+              <div style={{flex:1}}><div style={{fontSize:12,fontWeight:500}}>{s.name.split(' ')[0]}</div><div style={{fontSize:10,color:'var(--g5)'}}>{s.college.split(' ')[0]} · 🔥{s.streak}d</div></div>
+              <span style={{fontSize:12,fontWeight:700,color:'var(--text2)'}}>{s.score}%</span>
+            </div>
+          ))}
+        </div>
+        <div className="side-card">
+          <div className="side-title"><span style={{display:'flex',alignItems:'center',gap:5}}><Ic n="fire" s={14}/>Online now</span></div>
+          {STUDENTS.filter(s=>s.status==='active').map(s=>(
+            <div key={s.id} style={{display:'flex',alignItems:'center',gap:7,marginBottom:7}}>
+              <div style={{width:6,height:6,borderRadius:'50%',background:'var(--green)',flexShrink:0}}/>
+              <span style={{fontSize:12,color:'var(--text2)'}}>{s.name.split(' ')[0]}</span>
+              <span style={{fontSize:11,color:'var(--g5)'}}>· {s.streak}d streak</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════
+// PROGRESS
+// ═══════════════════════════════════════════════════════════════
+const Progress=()=>(
+  <div>
+    <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:14,marginBottom:22}}>
+      {[{l:'Overall completion',v:'68%',c:'var(--teal)',s:'Across all courses'},{l:'Tasks graded',v:'12/15',c:'var(--purple)',s:'Avg score: 84%'},{l:'Learning streak',v:'14 days',c:'var(--amber)',s:'Personal best: 21'}].map(s=>(
+        <div key={s.l} className="card" style={{textAlign:'center',padding:'20px'}}><div style={{fontFamily:'Space Grotesk',fontSize:27,fontWeight:700,color:s.c,marginBottom:4}}>{s.v}</div><div style={{fontSize:13,fontWeight:500,marginBottom:2}}>{s.l}</div><div style={{fontSize:11.5,color:'var(--text3)'}}>{s.s}</div></div>
+      ))}
+    </div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:18}}>
+      <div className="card-lg">
+        <h3 style={{fontFamily:'Space Grotesk',fontSize:14.5,fontWeight:600,marginBottom:15}}>Course progress</h3>
+        {COURSES.map(c=>(
+          <div key={c.id} style={{marginBottom:15}}>
+            <div style={{display:'flex',justifyContent:'space-between',marginBottom:5}}><span style={{fontSize:13,fontWeight:500}}>{c.title.split(':')[0]}</span><span style={{fontSize:13,fontWeight:700,fontFamily:'Space Grotesk'}}>{c.progress}%</span></div>
+            <div className="pbar"><div className="pfill" style={{width:`${c.progress}%`,background:c.progress===100?'var(--green)':c.progress>50?'var(--teal)':'var(--amber)'}}/></div>
+            <div style={{fontSize:11,color:'var(--text3)',marginTop:3}}>{c.instructor}</div>
+          </div>
+        ))}
+      </div>
+      <div className="card-lg">
+        <h3 style={{fontFamily:'Space Grotesk',fontSize:14.5,fontWeight:600,marginBottom:15}}>Task performance</h3>
+        {TASKS.map(t=>(
+          <div key={t.id} style={{display:'flex',alignItems:'center',gap:11,padding:'9px',background:'var(--g1)',borderRadius:'var(--r-sm)',marginBottom:8}}>
+            <div style={{width:7,height:7,borderRadius:'50%',flexShrink:0,background:t.status==='graded'?'var(--green)':t.status==='submitted'?'var(--purple)':'var(--amber)'}}/>
+            <div style={{flex:1}}><div style={{fontSize:12.5,fontWeight:500}}>{t.title.substring(0,38)}…</div><div style={{fontSize:11,color:'var(--text3)'}}>{t.status==='graded'?`${t.score}/${t.points} pts`:t.status}</div></div>
+            {t.score&&<div style={{fontSize:14,fontWeight:700,fontFamily:'Space Grotesk',color:'var(--green)'}}>{Math.round((t.score/t.points)*100)}%</div>}
+          </div>
+        ))}
+        <div style={{marginTop:16,padding:'12px',background:'var(--purple2)',borderRadius:'var(--r-sm)'}}>
+          <div style={{display:'flex',alignItems:'center',gap:7,marginBottom:5}}><Ic n="ai" s={13} c="var(--purple)"/><span style={{fontSize:12,fontWeight:600,color:'var(--purple)'}}>AI recommendation</span></div>
+          <p style={{fontSize:12.5,color:'#4C1D95',lineHeight:1.6}}>Your agent-building tasks score 87% avg. Focus next on <b>Multi-Agent Orchestration</b> — it unlocks your capstone project.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// ═══════════════════════════════════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════════════════════════════════
+const Admin=()=>{
+  const [showInvite,setShowInvite]=useState(false);
+  return(
+    <div>
+      <div className="stat-grid">
+        {[{l:'Total students',v:'120',c:'↑ 14 this week',u:true},{l:'Active today',v:'67',c:'56% engagement',u:true},{l:'At-risk',v:'4',c:'Need attention',u:false},{l:'Avg completion',v:'61%',c:'↑ 8% this month',u:true}].map(s=>(
+          <div key={s.l} className="stat-card"><div className="stat-label">{s.l}</div><div className="stat-val">{s.v}</div><div className={`stat-chg ${s.u?'up':'dn'}`}>{s.c}</div></div>
+        ))}
+      </div>
+      <div className="card-lg">
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:15}}>
+          <h3 style={{fontFamily:'Space Grotesk',fontSize:15,fontWeight:600}}>Student roster</h3>
+          <div style={{display:'flex',gap:8}}><button className="btn btn-secondary btn-sm">Export CSV</button><button className="btn btn-primary btn-sm" onClick={()=>setShowInvite(true)}><Ic n="plus" s={13}/>Invite students</button></div>
+        </div>
+        <div className="tbl-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Institution</th><th>Batch</th><th>Tasks</th><th>Score</th><th>Streak</th><th>Status</th></tr></thead>
+            <tbody>{STUDENTS.map(s=>(
+              <tr key={s.id}>
+                <td><div style={{display:'flex',alignItems:'center',gap:9}}><div style={{width:30,height:30,borderRadius:'50%',background:'var(--navy)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:600,color:'white',flexShrink:0}}>{s.name.split(' ').map(n=>n[0]).join('')}</div><div><div style={{fontWeight:500,fontSize:13}}>{s.name}</div><div style={{fontSize:11,color:'var(--text3)'}}>{s.email}</div></div></div></td>
+                <td style={{fontSize:13}}>{s.college}</td>
+                <td style={{fontSize:13}}>{s.batch}</td>
+                <td style={{fontSize:13,fontWeight:600}}>{s.completed}/4</td>
+                <td><span style={{fontWeight:700,color:s.score>=80?'var(--green)':s.score>=60?'var(--amber)':'var(--coral)'}}>{s.score}%</span></td>
+                <td style={{fontSize:13}}>🔥 {s.streak}d</td>
+                <td><span className={`badge ${s.status==='active'?'b-green':s.status==='at-risk'?'b-red':'b-gray'}`} style={{fontSize:10}}>{s.status==='at-risk'?'⚠ At risk':s.status}</span></td>
+              </tr>
+            ))}</tbody>
+          </table>
+        </div>
+      </div>
+      {showInvite&&(
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-hd"><div className="modal-title">Invite students</div><button className="icon-btn" onClick={()=>setShowInvite(false)}><Ic n="x" s={15}/></button></div>
+            <div className="modal-body">
+              <div className="form-group"><label className="form-label">Institution / cohort name</label><input className="form-input" placeholder="e.g. JAIN University MBA 2025"/></div>
+              <div className="form-group"><label className="form-label">Invite method</label><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:7}}>{['Email domain whitelist','CSV upload','Individual emails','Magic link'].map(m=><div key={m} style={{padding:'9px 12px',border:'1px solid var(--g3)',borderRadius:'var(--r-sm)',fontSize:12.5,cursor:'pointer',textAlign:'center'}}>{m}</div>)}</div></div>
+              <div className="form-group"><label className="form-label">Email addresses</label><textarea className="form-textarea" placeholder="student1@college.edu&#10;student2@college.edu" style={{minHeight:70}}/></div>
+              <div className="form-group" style={{marginBottom:0}}><label className="form-label">Courses to enrol</label>{COURSES.map(c=><label key={c.id} style={{display:'flex',alignItems:'center',gap:8,padding:'7px 0',fontSize:13,cursor:'pointer'}}><input type="checkbox" defaultChecked={c.id===1}/> {c.title.split(':')[0]}</label>)}</div>
+            </div>
+            <div className="modal-ft"><button className="btn btn-secondary btn-sm" onClick={()=>setShowInvite(false)}>Cancel</button><button className="btn btn-primary btn-sm">Send invites</button></div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════
+// AI STUDY ASSISTANT
+// ═══════════════════════════════════════════════════════════════
+const AIAssistant=({apiKey})=>{
+  const [msgs,setMsgs]=useState([{role:'assistant',content:"Hi! I'm your SimuLab AI study assistant, powered by Gemini. Ask me anything about your courses — n8n agents, Gemini API, Python analytics, AI strategy, or career tips. I'm here 24/7."}]);
+  const [input,setInput]=useState('');
+  const [loading,setLoading]=useState(false);
+  const chatRef=useRef(null);
+  const prompts=["Explain vector stores in simple terms","How do I add memory to an n8n agent?","Quiz me before my AI Strategy memo submission","What's the difference between RAG and fine-tuning?","Which AI roles pay best for MBA grads?"];
+  useEffect(()=>{if(chatRef.current)chatRef.current.scrollTop=chatRef.current.scrollHeight;},[msgs,loading]);
+  const send=async(text)=>{
+    const msg=text||input.trim();if(!msg||loading)return;
+    setInput('');setMsgs(m=>[...m,{role:'user',content:msg}]);setLoading(true);
+    try{
+      const history=[...msgs,{role:'user',content:msg}].map(m=>({role:m.role,content:m.content}));
+      const systemPrompt="You are a helpful AI study assistant for SimuLab, an applied agentic AI training program for MBA students at Indian B-schools. Help with: n8n workflows, Gemini API, Python analytics, AI business strategy, career advice for AI-first roles. Keep answers concise, practical, MBA-relevant. Use Indian business examples where helpful.";
+      const geminiHistory=history.map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]}));
+      const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey||""}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({system_instruction:{parts:[{text:systemPrompt}]},contents:geminiHistory,generationConfig:{maxOutputTokens:600,temperature:0.7}})});
+      const data=await res.json();
+      if(data.error)throw new Error(data.error.message);
+      setMsgs(m=>[...m,{role:'assistant',content:data.candidates[0].content.parts[0].text}]);
+    }catch(e){setMsgs(m=>[...m,{role:'assistant',content:"Trouble connecting. Check your Gemini API key in Settings — get it free at aistudio.google.com/apikey"}]);}
+    setLoading(false);
+  };
+  return(
+    <div style={{display:'grid',gridTemplateColumns:'1fr 230px',gap:18,height:'calc(100vh - 150px)'}}>
+      <div style={{display:'flex',flexDirection:'column',background:'var(--white)',border:'1px solid var(--g3)',borderRadius:'var(--r-lg)',overflow:'hidden'}}>
+        <div style={{padding:'14px 18px',borderBottom:'1px solid var(--g2)',display:'flex',alignItems:'center',gap:10}}>
+          <div style={{width:32,height:32,borderRadius:'50%',background:'linear-gradient(135deg,var(--teal),var(--purple))',display:'flex',alignItems:'center',justifyContent:'center'}}><Ic n="ai" s={15} c="white"/></div>
+          <div><div style={{fontSize:13,fontWeight:600}}>SimuLab Study Assistant</div><div style={{fontSize:11,color:'var(--green)'}}>● Online · Powered by Gemini</div></div>
+        </div>
+        <div ref={chatRef} style={{flex:1,overflowY:'auto',padding:'16px'}}>
+          {msgs.map((m,i)=><div key={i} className={m.role==='user'?'bubble-user':'bubble-ai'}>{m.content}</div>)}
+          {loading&&<div className="bubble-ai" style={{padding:'12px 14px',width:'fit-content'}}><div className="typing"><div className="dot"/><div className="dot"/><div className="dot"/></div></div>}
+        </div>
+        <div style={{padding:'11px 13px',borderTop:'1px solid var(--g2)',display:'flex',gap:8}}>
+          <input className="form-input" placeholder="Ask anything about your courses…" value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&!e.shiftKey&&send()} style={{flex:1}}/>
+          <button className="btn btn-primary" onClick={()=>send()} disabled={!input.trim()||loading} style={{flexShrink:0}}><Ic n="send" s={14}/></button>
+        </div>
+      </div>
+      <div style={{display:'flex',flexDirection:'column',gap:12}}>
+        <div className="card-lg"><h4 style={{fontSize:13,fontWeight:600,marginBottom:9}}>Quick questions</h4>{prompts.map(p=><button key={p} onClick={()=>send(p)} className="btn btn-ghost btn-sm" style={{width:'100%',textAlign:'left',justifyContent:'flex-start',marginBottom:5,fontSize:12,lineHeight:1.4,height:'auto',padding:'6px 9px',whiteSpace:'normal'}}>{p} →</button>)}</div>
+        <div className="card-lg" style={{background:'var(--teal3)',borderColor:'rgba(0,212,170,.2)'}}><div style={{fontSize:12,fontWeight:600,color:'var(--green3)',marginBottom:3}}>💡 Pro tip</div><p style={{fontSize:12,color:'#0F6E56',lineHeight:1.6}}>Ask the assistant to quiz you before submitting a task. It generates practice questions based on your course content.</p></div>
+      </div>
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════════════════════
+const Settings=({apiKey,setApiKey})=>{
+  const [local,setLocal]=useState(apiKey);const [saved,setSaved]=useState(false);
+  const save=()=>{setApiKey(local);setSaved(true);setTimeout(()=>setSaved(false),2500);};
+  return(
+    <div style={{maxWidth:540}}>
+      <div className="card-lg" style={{marginBottom:14}}>
+        <div style={{display:'flex',alignItems:'center',gap:9,marginBottom:14}}><Ic n="key" s={17} c="var(--purple)"/><h3 style={{fontFamily:'Space Grotesk',fontSize:14.5,fontWeight:600}}>Google AI Studio API key</h3></div>
+        <p style={{fontSize:13,color:'var(--text3)',marginBottom:13,lineHeight:1.65}}>Powers all AI features — task evaluation, study assistant, community feed personas (TrendScout AI + SimuBot AI). <b style={{color:'var(--green3)'}}>Free to use</b> via Google AI Studio with generous daily limits. Stored only in your browser.</p>
+        <div style={{padding:'10px 13px',background:'var(--teal3)',border:'1px solid rgba(0,212,170,.25)',borderRadius:'var(--r-sm)',marginBottom:12,fontSize:12.5,color:'var(--green3)'}}>
+          🎉 <b>Free tier:</b> Gemini 2.0 Flash gives you ~1,500 requests/day at zero cost. Perfect for student platforms.
+        </div>
+        <div className="form-group"><label className="form-label">API key</label><input className="form-input" type="password" placeholder="AIza…" value={local} onChange={e=>setLocal(e.target.value)}/></div>
+        <div style={{display:'flex',gap:8}}>
+          <button className="btn btn-primary" onClick={save}>{saved?'✓ Saved!':'Save key'}</button>
+          <a href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer" className="btn btn-secondary">Get free API key →</a>
+        </div>
+        {apiKey&&<div style={{marginTop:12,display:'flex',alignItems:'center',gap:7,fontSize:12.5,color:'var(--green3)'}}><Ic n="check" s={14} c="var(--green3)"/>Gemini API key active — all AI features enabled</div>}
+      </div>
+      <div className="card-lg" style={{marginBottom:14}}>
+        <h3 style={{fontFamily:'Space Grotesk',fontSize:14.5,fontWeight:600,marginBottom:14}}>Profile settings</h3>
+        <div style={{display:'grid',gap:12}}>
+          {[['Full name','Vaibhav'],['Email','vaibhav@simulab.in'],['Institution','SimuLab · Wingfinity Technologies'],['Role','Instructor / Admin']].map(([l,v])=>(
+            <div key={l} className="form-group" style={{margin:0}}><label className="form-label">{l}</label><input className="form-input" defaultValue={v}/></div>
+          ))}
+        </div>
+        <button className="btn btn-primary" style={{marginTop:14}}>Save profile</button>
+      </div>
+      <div className="card-lg" style={{background:'var(--g1)'}}>
+        <h3 style={{fontFamily:'Space Grotesk',fontSize:14,fontWeight:600,marginBottom:11}}>🚀 Deploy this LMS</h3>
+        <div style={{fontSize:13,color:'var(--text2)',lineHeight:1.8}}>
+          {['Drag this file into Vercel.com → instant deploy (free)','Set up Supabase for your database (free tier)','Add Mux or Bunny.net for real video hosting','Connect Razorpay for Indian student payments','Get free Gemini key at aistudio.google.com/apikey → paste above'].map((s,i)=>(
+            <div key={i} style={{display:'flex',gap:9,marginBottom:5}}><span style={{color:'var(--purple)',fontWeight:700,flexShrink:0}}>{i+1}.</span><span>{s}</span></div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ROOT APP
+// ═══════════════════════════════════════════════════════════════
+const App=()=>{
+  const [onboarded,setOnboarded]=useState(false);
+  const [user,setUser]=useState(null);
+  const [page,setPage]=useState('dashboard');
+  const [selectedCourse,setSelectedCourse]=useState(null);
+  const [evalModal,setEvalModal]=useState(null);
+  const [apiKey,setApiKey]=useState('');
+
+  if(!onboarded)return<Onboarding onDone={(f)=>{setUser(f);setOnboarded(true);}}/>;
+
+  const navMain=[{id:'dashboard',label:'Dashboard',icon:'home'},{id:'courses',label:'Courses',icon:'book'},{id:'tasks',label:'Tasks',icon:'task'},{id:'community',label:'Community',icon:'chat'},{id:'progress',label:'Progress',icon:'chart'}];
+  const navAdmin=[{id:'admin',label:'Students',icon:'users'},{id:'assistant',label:'AI Assistant',icon:'ai'},{id:'settings',label:'Settings',icon:'settings'}];
+  const titles={dashboard:'Dashboard',courses:'Courses',tasks:'Tasks & Evaluations',community:'Community Feed',progress:'My Progress',admin:'Student Management',assistant:'AI Study Assistant',settings:'Settings'};
+  const subs={dashboard:`Welcome back, ${user?.name?.split(' ')[0]||'Student'}`,courses:'All enrolled programs',tasks:'Submit work, get AI feedback instantly',community:'TrendScout AI & SimuBot AI post Mon–Sat',progress:'Track your learning journey',admin:'Manage cohorts and monitor progress',assistant:'Ask anything · Available 24/7',settings:'API key, profile & deployment'};
+  const activePage=selectedCourse?'courses':page;
+
+  const renderPage=()=>{
+    if(selectedCourse)return<CourseDetail course={selectedCourse} onBack={()=>setSelectedCourse(null)}/>;
+    switch(page){
+      case 'dashboard': return <Dashboard user={user} onNav={(p)=>{setPage(p);}}/>;
+      case 'courses': return <Courses onSelect={setSelectedCourse}/>;
+      case 'tasks': return <Tasks apiKey={apiKey} onEval={(task,sub)=>setEvalModal({task,sub})}/>;
+      case 'community': return <Community apiKey={apiKey}/>;
+      case 'progress': return <Progress/>;
+      case 'admin': return <Admin/>;
+      case 'assistant': return <AIAssistant apiKey={apiKey}/>;
+      case 'settings': return <Settings apiKey={apiKey} setApiKey={setApiKey}/>;
+      default: return <Dashboard user={user} onNav={setPage}/>;
+    }
+  };
+
+  return(
+    <div className="app">
+      <div className="sidebar">
+        <div className="sl-logo"><div className="sl-wordmark">Simu<span>Lab</span></div><div className="sl-tagline">APPLIED AGENTIC AI PLATFORM</div></div>
+        <div className="sl-section">Student</div>
+        {navMain.map(item=>(
+          <div key={item.id} className={`nav-item${activePage===item.id?' active':''}`} onClick={()=>{setSelectedCourse(null);setPage(item.id);}}>
+            <div className="nav-dot"/><Ic n={item.icon} s={16}/>{item.label}
+            {item.id==='tasks'&&<span className="nav-badge">2</span>}
+            {item.id==='community'&&<span className="nav-badge" style={{background:'var(--teal)',color:'var(--navy)'}}>AI</span>}
+          </div>
+        ))}
+        <div className="sl-section">Admin</div>
+        {navAdmin.map(item=>(
+          <div key={item.id} className={`nav-item${activePage===item.id?' active':''}`} onClick={()=>{setSelectedCourse(null);setPage(item.id);}}>
+            <div className="nav-dot"/><Ic n={item.icon} s={16}/>{item.label}
+          </div>
+        ))}
+        <div className="sl-user">
+          <div className="user-row">
+            <div className="u-avatar">{(user?.name||'S').split(' ').map(n=>n[0]).join('').slice(0,2)}</div>
+            <div><div className="u-name">{user?.name?.split(' ')[0]||'Student'}</div><div className="u-role">{user?.college?.split(' ')[0]||'SimuLab'} · {user?.batch||'2025'}</div></div>
+          </div>
+        </div>
+      </div>
+      <div className="main">
+        <div className="topbar">
+          <div><div className="tb-title">{selectedCourse?selectedCourse.title:titles[page]}</div><div className="tb-sub">{selectedCourse?selectedCourse.instructor+' · '+selectedCourse.duration:subs[page]}</div></div>
+          <div className="tb-right">
+            {!apiKey&&<button className="btn btn-secondary btn-sm" onClick={()=>setPage('settings')} style={{borderColor:'var(--amber)',color:'var(--amber)'}}><Ic n="key" s={13} c="var(--amber)"/>Set Gemini key (free)</button>}
+            <div className="icon-btn"><Ic n="bell" s={16}/></div>
+            <div style={{width:34,height:34,borderRadius:'50%',background:'linear-gradient(135deg,var(--teal),var(--purple))',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:700,color:'white',cursor:'pointer'}}>{(user?.name||'S').split(' ').map(n=>n[0]).join('').slice(0,2)}</div>
+          </div>
+        </div>
+        <div className="content">{renderPage()}</div>
+      </div>
+      {evalModal&&<AIEvalModal task={evalModal.task} submission={evalModal.sub} apiKey={apiKey} onClose={()=>setEvalModal(null)}/>}
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
